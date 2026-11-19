@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} company{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h1>{{ action }} company</h1>
+</header>
+
+<form method="post" class="panel">
+    <div class="form-grid">
+        <label class="field full">
+            <span>Company name <span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="company_name" maxlength="100" required autofocus
+                   value="{{ company.get('company_name') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>Industry</span>
+            <input type="text" name="industry" maxlength="50" placeholder="e.g. Cybersecurity"
+                   value="{{ company.get('industry') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>Website</span>
+            <input type="url" name="website" maxlength="200" placeholder="https://example.com"
+                   value="{{ company.get('website') or '' }}">
+            <small class="hint">Include https://</small>
+        </label>
+
+        <label class="field">
+            <span>City</span>
+            <input type="text" name="city" maxlength="50" value="{{ company.get('city') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>State</span>
+            <input type="text" name="state" maxlength="50" value="{{ company.get('state') or '' }}">
+        </label>
+
+        <label class="field full">
+            <span>Notes</span>
+            <textarea name="notes" rows="4" placeholder="Referral, culture, what you liked...">{{ company.get('notes') or '' }}</textarea>
+        </label>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn" type="submit">Save company</button>
+        <a class="btn btn-secondary" href="{{ url_for('companies') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

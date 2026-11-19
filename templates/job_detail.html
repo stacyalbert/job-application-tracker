@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ job.job_title }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('jobs') }}">Back to jobs</a>
+
+<header class="page-header">
+    <div>
+        <h1>{{ job.job_title }}</h1>
+        <p class="page-sub">{{ job.company_name }}</p>
+    </div>
+    <a class="btn" href="{{ url_for('job_edit', job_id=job.job_id) }}">Edit job</a>
+</header>
+
+<div class="panel">
+    <dl class="detail-grid">
+        <dt>Job type</dt>
+        <dd>{{ job.job_type or 'Not specified' }}</dd>
+
+        <dt>Salary</dt>
+        <dd>{{ job|salary_range or 'Not specified' }}</dd>
+
+        <dt>Date posted</dt>
+        <dd>{{ job.date_posted.strftime('%B %d, %Y') if job.date_posted else 'Not specified' }}</dd>
+
+        <dt>Posting</dt>
+        <dd>
+            {% if job.job_url %}
+            <a href="{{ job.job_url }}" target="_blank" rel="noopener noreferrer">Open job posting</a>
+            {% else %}Not specified{% endif %}
+        </dd>
+
+        <dt>Required skills</dt>
+        <dd>
+            {% if job.skills %}
+            <div class="tags">{% for s in job.skills %}<span class="tag">{{ s }}</span>{% endfor %}</div>
+            {% else %}No skills listed{% endif %}
+        </dd>
+    </dl>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Jobs{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Jobs</h1>
+        <p class="page-sub">Positions you've found, with the skills each one asks for.</p>
+    </div>
+    <a class="btn" href="{{ url_for('job_add') }}">Add job</a>
+</header>
+
+{% if jobs %}
+<div class="toolbar">
+    <input type="search" class="search" placeholder="Search jobs, companies, or skills"
+           aria-label="Search jobs"
+           data-filter-table="#jobs-table" data-filter-count="#row-count">
+    <span class="count" id="row-count">{{ jobs|length }} total</span>
+</div>
+
+<div class="table-wrap">
+    <table id="jobs-table">
+        <thead>
+            <tr>
+                <th>Job</th>
+                <th>Type</th>
+                <th>Salary</th>
+                <th>Skills</th>
+                <th>Posted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for j in jobs %}
+            <tr>
+                <td class="name">
+                    <a href="{{ url_for('job_detail', job_id=j.job_id) }}">{{ j.job_title }}</a>
+                    <div class="sub">{{ j.company_name }}</div>
+                </td>
+                <td>{{ j.job_type or '' }}</td>
+                <td>{{ j|salary_range }}</td>
+                <td>
+                    <div class="tags">
+                        {% for s in j.skills[:3] %}<span class="tag">{{ s }}</span>{% endfor %}
+                        {% if j.skills|length > 3 %}<span class="sub">+{{ j.skills|length - 3 }} more</span>{% endif %}
+                    </div>
+                </td>
+                <td>{{ j.date_posted.strftime('%b %d, %Y') if j.date_posted else '' }}</td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-sm" href="{{ url_for('job_edit', job_id=j.job_id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('job_delete', job_id=j.job_id) }}"
+                              data-confirm="Delete {{ j.job_title }} at {{ j.company_name }}? This also deletes its applications.">
+                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty">
+    <h2>No jobs yet</h2>
+    <p>Add a position you're interested in. You'll need at least one company first.</p>
+    <a class="btn" href="{{ url_for('job_add') }}">Add job</a>
+</div>
+{% endif %}
+{% endblock %}

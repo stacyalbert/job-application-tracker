@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Companies{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Companies</h1>
+        <p class="page-sub">The employers you're tracking.</p>
+    </div>
+    <a class="btn" href="{{ url_for('company_add') }}">Add company</a>
+</header>
+
+{% if companies %}
+<div class="toolbar">
+    <input type="search" class="search" placeholder="Search companies"
+           aria-label="Search companies"
+           data-filter-table="#companies-table" data-filter-count="#row-count">
+    <span class="count" id="row-count">{{ companies|length }} total</span>
+</div>
+
+<div class="table-wrap">
+    <table id="companies-table">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Industry</th>
+                <th>Location</th>
+                <th>Website</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in companies %}
+            <tr>
+                <td class="name">
+                    {{ c.company_name }}
+                    {% if c.notes %}<div class="sub">{{ c.notes|truncate(60) }}</div>{% endif %}
+                </td>
+                <td>{{ c.industry or '' }}</td>
+                <td>{{ c.city or '' }}{% if c.city and c.state %}, {% endif %}{{ c.state or '' }}</td>
+                <td>
+                    {% if c.website %}
+                    <a href="{{ c.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-sm" href="{{ url_for('company_edit', company_id=c.company_id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('company_delete', company_id=c.company_id) }}"
+                              data-confirm="Delete {{ c.company_name }}? This also deletes its jobs, contacts, and applications.">
+                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty">
+    <h2>No companies yet</h2>
+    <p>Add the first company you're applying to.</p>
+    <a class="btn" href="{{ url_for('company_add') }}">Add company</a>
+</div>
+{% endif %}
+{% endblock %}

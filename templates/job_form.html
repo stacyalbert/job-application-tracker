@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} job{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h1>{{ action }} job</h1>
+</header>
+
+{% if not companies %}
+<div class="empty">
+    <h2>Add a company first</h2>
+    <p>Every job belongs to a company.</p>
+    <a class="btn" href="{{ url_for('company_add') }}">Add company</a>
+</div>
+{% else %}
+<form method="post" class="panel">
+    <div class="form-grid">
+        <label class="field full">
+            <span>Company <span class="req" aria-hidden="true">*</span></span>
+            <select name="company_id" required>
+                <option value="">Choose a company</option>
+                {% for c in companies %}
+                <option value="{{ c.company_id }}"
+                    {% if job.get('company_id')|string == c.company_id|string %}selected{% endif %}>
+                    {{ c.company_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field full">
+            <span>Job title <span class="req" aria-hidden="true">*</span></span>
+            <input type="text" name="job_title" maxlength="100" required
+                   value="{{ job.get('job_title') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>Job type</span>
+            <select name="job_type">
+                <option value="">Not specified</option>
+                {% for t in job_types %}
+                <option value="{{ t }}" {% if job.get('job_type') == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field">
+            <span>Date posted</span>
+            <input type="date" name="date_posted" value="{{ job.get('date_posted') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>Minimum salary</span>
+            <input type="number" name="salary_min" min="0" step="1000" placeholder="70000"
+                   value="{{ '' if job.get('salary_min') is none else job.get('salary_min') }}">
+        </label>
+
+        <label class="field">
+            <span>Maximum salary</span>
+            <input type="number" name="salary_max" min="0" step="1000" placeholder="95000"
+                   value="{{ '' if job.get('salary_max') is none else job.get('salary_max') }}">
+        </label>
+
+        <label class="field full">
+            <span>Job posting URL</span>
+            <input type="url" name="job_url" maxlength="300" placeholder="https://..."
+                   value="{{ job.get('job_url') or '' }}">
+        </label>
+
+        <label class="field full">
+            <span>Required skills</span>
+            <input type="text" name="skills" placeholder="Python, SQL, Flask"
+                   value="{{ job.get('skills') or '' }}">
+            <small class="hint">Separate skills with commas. Job Match compares your skills against this list.</small>
+        </label>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn" type="submit">Save job</button>
+        <a class="btn btn-secondary" href="{{ url_for('jobs') }}">Cancel</a>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

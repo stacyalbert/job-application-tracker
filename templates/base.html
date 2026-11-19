@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Job Application Tracker{% endblock %} | Job Tracker</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <a class="brand" href="{{ url_for('companies') }}">Job Tracker</a>
+        <nav>
+            <a href="{{ url_for('companies') }}"
+               class="{{ 'active' if request.endpoint in ('companies', 'company_add', 'company_edit') }}">Companies</a>
+            <a href="{{ url_for('jobs') }}"
+            class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail') }}">Jobs</a>
+            {# Add Dashboard, Applications, Contacts, and Job Match links as you build them #}
+        </nav>
+    </aside>
+
+    <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}" role="status">
+                    <span>{{ message }}</span>
+                    <button class="flash-close" type="button" aria-label="Dismiss message">&times;</button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
