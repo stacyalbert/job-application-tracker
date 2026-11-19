@@ -50,13 +50,13 @@
 
         <label class="field">
             <span>Minimum salary</span>
-            <input type="number" name="salary_min" min="0" step="1000" placeholder="70000"
+            <input type="number" name="salary_min" min="0" max="2147483647" step="1000" placeholder="70000"
                    value="{{ '' if job.get('salary_min') is none else job.get('salary_min') }}">
         </label>
 
         <label class="field">
             <span>Maximum salary</span>
-            <input type="number" name="salary_max" min="0" step="1000" placeholder="95000"
+            <input type="number" name="salary_max" min="0" max="2147483647" step="1000" placeholder="95000"
                    value="{{ '' if job.get('salary_max') is none else job.get('salary_max') }}">
         </label>
 

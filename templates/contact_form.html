@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Contact{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>{{ action }} contact</h1>
+    </div>
+</header>
+
+<div class="panel">
+    <form method="post">
+        <div class="form-grid">
+            <div class="field">
+                <label for="company_id">Company <span class="req">*</span></label>
+                <select id="company_id" name="company_id" required>
+                    <option value="">Choose a company</option>
+                    {% for company in companies %}
+                    <option value="{{ company.company_id }}"
+                            {% if contact.company_id|string == company.company_id|string %}selected{% endif %}>
+                        {{ company.company_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="contact_name">Name <span class="req">*</span></label>
+                <input id="contact_name" name="contact_name"
+                       value="{{ contact.contact_name or '' }}" maxlength="100" required>
+            </div>
+
+            <div class="field">
+                <label for="title">Title</label>
+                <input id="title" name="title"
+                       value="{{ contact.title or '' }}" maxlength="100">
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email"
+                       value="{{ contact.email or '' }}" maxlength="100">
+            </div>
+
+            <div class="field">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone"
+                       value="{{ contact.phone or '' }}" maxlength="20">
+            </div>
+
+            <div class="field">
+                <label for="linkedin_url">LinkedIn URL</label>
+                <input id="linkedin_url" name="linkedin_url"
+                       value="{{ contact.linkedin_url or '' }}"
+                       placeholder="https://linkedin.com/in/" maxlength="200">
+            </div>
+
+            <div class="field full">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" rows="5"
+                          maxlength="2000">{{ contact.notes or '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn" type="submit">{{ action }} contact</button>
+            <a class="btn btn-secondary" href="{{ url_for('contacts') }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,15 +13,20 @@
 <body>
 <div class="shell">
     <aside class="sidebar">
-        <a class="brand" href="{{ url_for('companies') }}">Job Tracker</a>
+        <a class="brand" href="{{ url_for('dashboard') }}">Job Tracker</a>
         <nav>
+            <a href="{{ url_for('dashboard') }}"
+               class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
             <a href="{{ url_for('companies') }}"
                class="{{ 'active' if request.endpoint in ('companies', 'company_add', 'company_edit') }}">Companies</a>
             <a href="{{ url_for('jobs') }}"
                class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail') }}">Jobs</a>
             <a href="{{ url_for('applications') }}"
                class="{{ 'active' if request.endpoint in ('applications', 'application_add', 'application_edit', 'application_detail') }}">Applications</a>
-            {# Add Dashboard, Contacts, and Job Match links as you build them #}
+            <a href="{{ url_for('contacts') }}"
+               class="{{ 'active' if request.endpoint in ('contacts', 'contact_add', 'contact_edit') }}">Contacts</a>
+            <a href="{{ url_for('job_match') }}"
+               class="{{ 'active' if request.endpoint == 'job_match' }}">Job Match</a>
         </nav>
     </aside>
 

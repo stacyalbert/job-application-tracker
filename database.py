@@ -170,6 +170,15 @@ def get_all_applications():
     return [_with_interview(r) for r in rows]
 
 
+def get_recent_applications(limit=5):
+    rows = fetch_all(
+        APPLICATION_SELECT
+        + " ORDER BY a.application_date DESC, a.application_id DESC LIMIT %s",
+        (limit,),
+    )
+    return [_with_interview(row) for row in rows]
+
+
 def get_application(application_id):
     return _with_interview(
         fetch_one(APPLICATION_SELECT + " WHERE a.application_id = %s", (application_id,))
@@ -201,3 +210,62 @@ def update_application(application_id, d):
 def delete_application(application_id):
     return execute("DELETE FROM applications WHERE application_id = %s", (application_id,))
 
+# ---------- Contacts ----------
+
+CONTACT_SELECT = """SELECT ct.*, c.company_name
+                    FROM contacts ct
+                    JOIN companies c ON ct.company_id = c.company_id"""
+
+
+def get_all_contacts():
+    return fetch_all(CONTACT_SELECT + " ORDER BY c.company_name, ct.contact_name")
+
+
+def get_contact(contact_id):
+    return fetch_one(CONTACT_SELECT + " WHERE ct.contact_id = %s", (contact_id,))
+
+
+def add_contact(d):
+    return execute(
+        """INSERT INTO contacts (company_id, contact_name, title, email, phone, linkedin_url, notes)
+           VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+        (d["company_id"], d["contact_name"], d["title"], d["email"],
+         d["phone"], d["linkedin_url"], d["notes"]),
+    )
+
+
+def update_contact(contact_id, d):
+    return execute(
+        """UPDATE contacts
+           SET company_id=%s, contact_name=%s, title=%s, email=%s,
+               phone=%s, linkedin_url=%s, notes=%s
+           WHERE contact_id=%s""",
+        (d["company_id"], d["contact_name"], d["title"], d["email"],
+         d["phone"], d["linkedin_url"], d["notes"], contact_id),
+    )
+
+
+def delete_contact(contact_id):
+    return execute("DELETE FROM contacts WHERE contact_id = %s", (contact_id,))
+
+
+# ---------- Dashboard ----------
+
+def get_table_counts():
+    return fetch_one(
+        """SELECT
+            (SELECT COUNT(*) FROM companies) AS companies,
+            (SELECT COUNT(*) FROM jobs) AS jobs,
+            (SELECT COUNT(*) FROM applications) AS applications,
+            (SELECT COUNT(*) FROM contacts) AS contacts"""
+    )
+
+
+def get_application_status_counts():
+    return fetch_all(
+        """SELECT status, COUNT(*) AS count
+           FROM applications
+           GROUP BY status
+           ORDER BY FIELD(status, 'Applied', 'Screening', 'Interview',
+                                  'Offer', 'Rejected', 'Withdrawn')"""
+    )

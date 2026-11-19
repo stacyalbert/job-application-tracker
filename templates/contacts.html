@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Contacts{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Contacts</h1>
+        <p class="page-sub">Recruiters, hiring managers, and people you've met at each company.</p>
+    </div>
+    <a class="btn" href="{{ url_for('contact_add') }}">Add contact</a>
+</header>
+
+{% if contacts %}
+<div class="toolbar">
+    <input type="search" class="search" placeholder="Search by name, company, or title"
+           aria-label="Search contacts"
+           data-filter-table="#contacts-table" data-filter-count="#row-count">
+    <span class="count" id="row-count">{{ contacts|length }} total</span>
+</div>
+
+<div class="table-wrap">
+    <table id="contacts-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>LinkedIn</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ct in contacts %}
+            <tr>
+                <td class="name">
+                    {{ ct.contact_name }}
+                    {% if ct.title %}<div class="sub">{{ ct.title }}</div>{% endif %}
+                </td>
+                <td>{{ ct.company_name }}</td>
+                <td>{% if ct.email %}<a href="mailto:{{ ct.email }}">{{ ct.email }}</a>{% endif %}</td>
+                <td>{{ ct.phone or '' }}</td>
+                <td>
+                    {% if ct.linkedin_url %}
+                    <a href="{{ ct.linkedin_url }}" target="_blank" rel="noopener noreferrer">Profile</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-sm" href="{{ url_for('contact_edit', contact_id=ct.contact_id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('contact_delete', contact_id=ct.contact_id) }}"
+                              data-confirm="Delete {{ ct.contact_name }} from {{ ct.company_name }}?">
+                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty">
+    <h2>No contacts yet</h2>
+    <p>Save the people you meet at companies you're applying to. You'll need at least one company first.</p>
+    <a class="btn" href="{{ url_for('contact_add') }}">Add contact</a>
+</div>
+{% endif %}
+{% endblock %}

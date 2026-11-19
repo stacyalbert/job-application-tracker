@@ -248,3 +248,62 @@ td .sub { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
 @media (max-width: 800px) {
   .check { padding-top: 0; }
 }
+
+/* ---------- Dashboard ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.stat-card:hover { border-color: #AEB7C2; }
+.stat-card strong { font-size: 2rem; line-height: 1; }
+.stat-label { color: var(--muted); font-weight: 600; }
+.dashboard-section { margin-top: 24px; }
+.dashboard-section h2 { margin-bottom: 12px; }
+.status-summary { display: flex; flex-wrap: wrap; gap: 10px; }
+.status-summary a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+/* ---------- Job Match ---------- */
+.match-panel { max-width: none; }
+.match-results { margin-top: 24px; }
+.match-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  margin-top: 12px;
+  display: grid;
+  gap: 14px;
+}
+.match-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.match-heading h3 { margin: 0; }
+.match-percent { font-size: 1.5rem; color: var(--brand); }
+.match-label { display: block; color: var(--muted); font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; }
+.tag-match { background: var(--success-bg); color: var(--success); }
+.tag-missing { background: var(--danger-bg); color: var(--danger); }
+
+@media (max-width: 800px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+}
