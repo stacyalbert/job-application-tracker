@@ -3,34 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Job Application Tracker{% endblock %} | Job Tracker</title>
+    <title>{% block title %}Job Application Tracker{% endblock %} | Nextmove</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="shell">
     <aside class="sidebar">
-        <a class="brand" href="{{ url_for('dashboard') }}">Job Tracker</a>
-        <nav>
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="brand-copy">
+                <strong>Nextmove</strong>
+                <small>CAREER STUDIO</small>
+            </span>
+        </a>
+        <div class="nav-label">WORKSPACE</div>
+        <nav aria-label="Main navigation">
             <a href="{{ url_for('dashboard') }}"
-               class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
+               class="{{ 'active' if request.endpoint == 'dashboard' }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+                <span>Overview</span>
+            </a>
             <a href="{{ url_for('companies') }}"
-               class="{{ 'active' if request.endpoint in ('companies', 'company_add', 'company_edit') }}">Companies</a>
+               class="{{ 'active' if request.endpoint in ('companies', 'company_add', 'company_edit', 'company_delete') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20.5h16M6.5 20V5.5l5.5-2v16.5M12 9h5.5v11M8.5 7.5h1M8.5 11h1M8.5 14.5h1M15 12.5h1M15 16h1"/></svg>
+                <span>Companies</span>
+            </a>
             <a href="{{ url_for('jobs') }}"
-               class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail') }}">Jobs</a>
+               class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail', 'job_delete') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="13.5" rx="2"/><path d="M8.5 7V5.5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2V7M3.5 12h17M10 12v2h4v-2"/></svg>
+                <span>Job library</span>
+            </a>
             <a href="{{ url_for('applications') }}"
-               class="{{ 'active' if request.endpoint in ('applications', 'application_add', 'application_edit', 'application_detail') }}">Applications</a>
+               class="{{ 'active' if request.endpoint in ('applications', 'application_add', 'application_edit', 'application_detail', 'application_delete') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4.5 4.5v12a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5.5 20V5A1.5 1.5 0 0 1 7 3.5Z"/><path d="M14 3.5V8h4.5M8.5 12h7M8.5 15.5h7"/></svg>
+                <span>Applications</span>
+            </a>
             <a href="{{ url_for('contacts') }}"
-               class="{{ 'active' if request.endpoint in ('contacts', 'contact_add', 'contact_edit') }}">Contacts</a>
-            <a href="{{ url_for('job_match') }}"
-               class="{{ 'active' if request.endpoint == 'job_match' }}">Job Match</a>
+               class="{{ 'active' if request.endpoint in ('contacts', 'contact_add', 'contact_edit', 'contact_delete') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20v-1.5a5.5 5.5 0 0 1 11 0V20ZM16 4.8a3.5 3.5 0 0 1 0 6.4M17 14a5.5 5.5 0 0 1 3.5 5.2V20"/></svg>
+                <span>People</span>
+            </a>
         </nav>
+        <div class="nav-label tools-label">TOOLS</div>
+        <nav aria-label="Career tools">
+            <a href="{{ url_for('job_match') }}"
+               class="{{ 'active' if request.endpoint == 'job_match' }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.8 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 2.8Z"/></svg>
+                <span>Skill match</span>
+                <span class="nav-new">BETA</span>
+            </a>
+        </nav>
+        <div class="sidebar-foot">
+            <span class="workspace-avatar">S</span>
+            <span><strong>My workspace</strong><small>PERSONAL EDITION</small></span>
+            <span class="workspace-status" aria-label="Workspace active"></span>
+        </div>
     </aside>
 
     <main class="content">
+        <div class="topbar">
+            <div class="breadcrumb">
+                <span>WORKSPACE</span><span class="breadcrumb-slash">/</span>
+                <strong>
+                    {% if request.endpoint == 'dashboard' %}Career overview
+                    {% elif request.endpoint in ('companies', 'company_add', 'company_edit', 'company_delete') %}Companies
+                    {% elif request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail', 'job_delete') %}Job library
+                    {% elif request.endpoint in ('applications', 'application_add', 'application_edit', 'application_detail', 'application_delete') %}Applications
+                    {% elif request.endpoint in ('contacts', 'contact_add', 'contact_edit', 'contact_delete') %}People
+                    {% elif request.endpoint == 'job_match' %}Skill match
+                    {% else %}Career studio{% endif %}
+                </strong>
+            </div>
+            <a class="topbar-action" href="{{ url_for('application_add') }}"><span aria-hidden="true">+</span> Track an application</a>
+        </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
                 <div class="flash {{ category }}" role="status">
