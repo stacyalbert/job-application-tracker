@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Applications</h1>
+        <p class="page-sub">Where each application stands.</p>
+    </div>
+    <a class="btn" href="{{ url_for('application_add') }}">Add application</a>
+</header>
+
+{% if applications %}
+<div class="toolbar">
+    <input type="search" class="search" placeholder="Search by job, company, or status"
+           aria-label="Search applications"
+           data-filter-table="#applications-table" data-filter-count="#row-count">
+    <span class="count" id="row-count">{{ applications|length }} total</span>
+</div>
+
+<div class="table-wrap">
+    <table id="applications-table">
+        <thead>
+            <tr>
+                <th>Job</th>
+                <th>Applied</th>
+                <th>Status</th>
+                <th>Resume</th>
+                <th>Cover letter</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for a in applications %}
+            <tr>
+                <td class="name">
+                    <a href="{{ url_for('application_detail', application_id=a.application_id) }}">{{ a.job_title }}</a>
+                    <div class="sub">{{ a.company_name }}</div>
+                </td>
+                <td>{{ a.application_date.strftime('%b %d, %Y') }}</td>
+                <td><span class="pill status-{{ a.status|lower }}">{{ a.status }}</span></td>
+                <td>{{ a.resume_version or '' }}</td>
+                <td>{{ 'Sent' if a.cover_letter_sent else 'Not sent' }}</td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-sm" href="{{ url_for('application_edit', application_id=a.application_id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('application_delete', application_id=a.application_id) }}"
+                              data-confirm="Delete your application for {{ a.job_title }} at {{ a.company_name }}?">
+                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty">
+    <h2>No applications yet</h2>
+    <p>Track your first application. You'll need at least one job first.</p>
+    <a class="btn" href="{{ url_for('application_add') }}">Add application</a>
+</div>
+{% endif %}
+{% endblock %}

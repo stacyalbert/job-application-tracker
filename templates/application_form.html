@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} application{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h1>{{ action }} application</h1>
+</header>
+
+{% if not jobs %}
+<div class="empty">
+    <h2>Add a job first</h2>
+    <p>Every application is for a job.</p>
+    <a class="btn" href="{{ url_for('job_add') }}">Add job</a>
+</div>
+{% else %}
+<form method="post" class="panel">
+    <div class="form-grid">
+        <label class="field full">
+            <span>Job <span class="req" aria-hidden="true">*</span></span>
+            <select name="job_id" required>
+                <option value="">Choose a job</option>
+                {% for j in jobs %}
+                <option value="{{ j.job_id }}"
+                    {% if application.get('job_id')|string == j.job_id|string %}selected{% endif %}>
+                    {{ j.job_title }} at {{ j.company_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field">
+            <span>Application date <span class="req" aria-hidden="true">*</span></span>
+            <input type="date" name="application_date" required
+                   value="{{ application.get('application_date') or '' }}">
+        </label>
+
+        <label class="field">
+            <span>Status</span>
+            <select name="status">
+                {% for s in statuses %}
+                <option value="{{ s }}" {% if application.get('status') == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field">
+            <span>Resume version</span>
+            <input type="text" name="resume_version" maxlength="50" placeholder="e.g. v2"
+                   value="{{ application.get('resume_version') or '' }}">
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="cover_letter_sent"
+                   {% if application.get('cover_letter_sent') %}checked{% endif %}>
+            <span>Cover letter sent</span>
+        </label>
+
+        <h2 class="form-section">Interview details</h2>
+
+        {% if rounds %}
+        <div class="field full">
+            <span>Rounds so far</span>
+            <ul class="round-list">
+                {% for r in rounds %}
+                <li><strong>{{ r.get('type') }}</strong>{% if r.get('date') %} on {{ r.get('date') }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <label class="field">
+            <span>Add an interview round</span>
+            <select name="round_type">
+                <option value="">No new round</option>
+                {% for t in round_types %}
+                <option value="{{ t }}" {% if application.get('round_type') == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label class="field">
+            <span>Interview date</span>
+            <input type="date" name="round_date" value="{{ application.get('round_date') or '' }}">
+        </label>
+
+        <label class="field full">
+            <span>Notes</span>
+            <textarea name="notes" rows="5" maxlength="2000"
+                      placeholder="Questions they asked, who you spoke with, follow-ups...">{{ application.get('notes') or '' }}</textarea>
+        </label>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn" type="submit">Save application</button>
+        <a class="btn btn-secondary" href="{{ url_for('applications') }}">Cancel</a>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

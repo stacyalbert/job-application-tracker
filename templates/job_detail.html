@@ -8,7 +8,10 @@
         <h1>{{ job.job_title }}</h1>
         <p class="page-sub">{{ job.company_name }}</p>
     </div>
-    <a class="btn" href="{{ url_for('job_edit', job_id=job.job_id) }}">Edit job</a>
+    <div class="actions">
+        <a class="btn btn-secondary" href="{{ url_for('application_add', job_id=job.job_id) }}">Track application</a>
+        <a class="btn" href="{{ url_for('job_edit', job_id=job.job_id) }}">Edit job</a>
+    </div>
 </header>
 
 <div class="panel">

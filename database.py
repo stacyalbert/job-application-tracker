@@ -136,3 +136,68 @@ def update_job(job_id, d):
 
 def delete_job(job_id):
     return execute("DELETE FROM jobs WHERE job_id = %s", (job_id,))
+
+# ---------- Applications ----------
+
+def parse_json_object(value):
+    """Turn whatever MySQL returns for a JSON column into a Python dict."""
+    if value is None:
+        return {}
+    if isinstance(value, (bytes, bytearray)):
+        value = value.decode()
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except ValueError:
+            return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _with_interview(row):
+    if row is not None:
+        row["interview"] = parse_json_object(row.get("interview_data"))
+    return row
+
+
+APPLICATION_SELECT = """SELECT a.*, j.job_title, c.company_name
+                        FROM applications a
+                        JOIN jobs j ON a.job_id = j.job_id
+                        JOIN companies c ON j.company_id = c.company_id"""
+
+
+def get_all_applications():
+    rows = fetch_all(APPLICATION_SELECT + " ORDER BY a.application_date DESC, a.application_id DESC")
+    return [_with_interview(r) for r in rows]
+
+
+def get_application(application_id):
+    return _with_interview(
+        fetch_one(APPLICATION_SELECT + " WHERE a.application_id = %s", (application_id,))
+    )
+
+
+def add_application(d):
+    return execute(
+        """INSERT INTO applications (job_id, application_date, status, resume_version,
+                                     cover_letter_sent, interview_data)
+           VALUES (%s, %s, %s, %s, %s, %s)""",
+        (d["job_id"], d["application_date"], d["status"], d["resume_version"],
+         d["cover_letter_sent"], json.dumps(d["interview"]) if d["interview"] else None),
+    )
+
+
+def update_application(application_id, d):
+    return execute(
+        """UPDATE applications
+           SET job_id=%s, application_date=%s, status=%s, resume_version=%s,
+               cover_letter_sent=%s, interview_data=%s
+           WHERE application_id=%s""",
+        (d["job_id"], d["application_date"], d["status"], d["resume_version"],
+         d["cover_letter_sent"], json.dumps(d["interview"]) if d["interview"] else None,
+         application_id),
+    )
+
+
+def delete_application(application_id):
+    return execute("DELETE FROM applications WHERE application_id = %s", (application_id,))
+

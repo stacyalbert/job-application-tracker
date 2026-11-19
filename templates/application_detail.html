@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ application.job_title }} application{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('applications') }}">Back to applications</a>
+
+<header class="page-header">
+    <div>
+        <h1>{{ application.job_title }}</h1>
+        <p class="page-sub">{{ application.company_name }}</p>
+    </div>
+    <a class="btn" href="{{ url_for('application_edit', application_id=application.application_id) }}">Edit application</a>
+</header>
+
+<div class="panel">
+    <dl class="detail-grid">
+        <dt>Status</dt>
+        <dd><span class="pill status-{{ application.status|lower }}">{{ application.status }}</span></dd>
+
+        <dt>Applied</dt>
+        <dd>{{ application.application_date.strftime('%B %d, %Y') }}</dd>
+
+        <dt>Job</dt>
+        <dd><a href="{{ url_for('job_detail', job_id=application.job_id) }}">View job details</a></dd>
+
+        <dt>Resume version</dt>
+        <dd>{{ application.resume_version or 'Not specified' }}</dd>
+
+        <dt>Cover letter</dt>
+        <dd>{{ 'Sent' if application.cover_letter_sent else 'Not sent' }}</dd>
+
+        <dt>Interview rounds</dt>
+        <dd>
+            {% set rounds = application.interview.get('rounds') %}
+            {% if rounds %}
+            <ul class="round-list">
+                {% for r in rounds %}
+                <li><strong>{{ r.get('type') }}</strong>{% if r.get('date') %} on {{ r.get('date') }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+            {% else %}None recorded{% endif %}
+        </dd>
+
+        <dt>Notes</dt>
+        <dd class="notes">{{ application.interview.get('notes') or 'No notes' }}</dd>
+    </dl>
+</div>
+{% endblock %}

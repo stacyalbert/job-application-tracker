@@ -18,8 +18,10 @@
             <a href="{{ url_for('companies') }}"
                class="{{ 'active' if request.endpoint in ('companies', 'company_add', 'company_edit') }}">Companies</a>
             <a href="{{ url_for('jobs') }}"
-            class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail') }}">Jobs</a>
-            {# Add Dashboard, Applications, Contacts, and Job Match links as you build them #}
+               class="{{ 'active' if request.endpoint in ('jobs', 'job_add', 'job_edit', 'job_detail') }}">Jobs</a>
+            <a href="{{ url_for('applications') }}"
+               class="{{ 'active' if request.endpoint in ('applications', 'application_add', 'application_edit', 'application_detail') }}">Applications</a>
+            {# Add Dashboard, Contacts, and Job Match links as you build them #}
         </nav>
     </aside>
 

@@ -219,6 +219,139 @@ def job_delete(job_id):
     flash("Job deleted.", "success")
     return redirect(url_for("jobs"))
 
+# ---------- Applications ----------
+
+APP_FIELDS = ["job_id", "application_date", "status", "resume_version",
+              "cover_letter_sent", "notes", "round_type", "round_date"]
+APPLICATION_STATUSES = ["Applied", "Screening", "Interview", "Offer", "Rejected", "Withdrawn"]
+ROUND_TYPES = ["Phone screen", "Technical", "Behavioral", "On-site", "Final round"]
+
+
+def today_str():
+    return datetime.now().strftime("%Y-%m-%d")
+
+
+def validate_application(raw, existing_interview=None):
+    """Returns (cleaned_data, errors). existing_interview keeps rounds already saved."""
+    errors, data = [], dict(raw)
+
+    try:
+        data["job_id"] = int(raw["job_id"])
+        if not db.get_job(data["job_id"]):
+            errors.append("Choose a job from the list.")
+    except (TypeError, ValueError):
+        errors.append("Choose a job.")
+
+    if not raw["application_date"]:
+        errors.append("Application date is required.")
+    else:
+        try:
+            applied = datetime.strptime(raw["application_date"], "%Y-%m-%d")
+            if applied.date() > datetime.now().date():
+                errors.append("Application date can't be in the future.")
+        except ValueError:
+            errors.append("Application date must be a valid date.")
+
+    data["status"] = raw["status"] or "Applied"
+    if data["status"] not in APPLICATION_STATUSES:
+        errors.append("Choose a valid status.")
+
+    if raw["resume_version"] and len(raw["resume_version"]) > 50:
+        errors.append("Resume version must be 50 characters or fewer.")
+
+    data["cover_letter_sent"] = bool(raw["cover_letter_sent"])
+
+    if raw["notes"] and len(raw["notes"]) > 2000:
+        errors.append("Interview notes must be 2,000 characters or fewer.")
+
+    if raw["round_type"] and raw["round_type"] not in ROUND_TYPES:
+        errors.append("Choose a valid interview type.")
+    if raw["round_date"]:
+        if not raw["round_type"]:
+            errors.append("Choose an interview type for the interview date.")
+        try:
+            datetime.strptime(raw["round_date"], "%Y-%m-%d")
+        except ValueError:
+            errors.append("Interview date must be a valid date.")
+
+    # Build the JSON stored in interview_data: keep saved rounds, update notes, add a new round.
+    interview = dict(existing_interview or {})
+    if raw["notes"]:
+        interview["notes"] = raw["notes"]
+    else:
+        interview.pop("notes", None)
+    if raw["round_type"]:
+        rounds = list(interview.get("rounds") or [])
+        rounds.append({"type": raw["round_type"], "date": raw["round_date"] or ""})
+        interview["rounds"] = rounds
+    data["interview"] = interview or None
+    return data, errors
+
+
+def render_application_form(form, action, rounds=None):
+    return render_template("application_form.html", application=form, action=action,
+                           jobs=db.get_all_jobs(), statuses=APPLICATION_STATUSES,
+                           round_types=ROUND_TYPES, rounds=rounds or [])
+
+
+@app.route("/applications")
+def applications():
+    return render_template("applications.html", applications=db.get_all_applications())
+
+
+@app.route("/applications/<int:application_id>")
+def application_detail(application_id):
+    application = db.get_application(application_id)
+    if not application:
+        flash("Application not found.", "error")
+        return redirect(url_for("applications"))
+    return render_template("application_detail.html", application=application)
+
+
+@app.route("/applications/add", methods=["GET", "POST"])
+def application_add():
+    if request.method == "POST":
+        raw = clean(request.form, APP_FIELDS)
+        data, errors = validate_application(raw)
+        if errors:
+            for e in errors:
+                flash(e, "error")
+            return render_application_form(raw, "Add")
+        db.add_application(data)
+        flash("Application added.", "success")
+        return redirect(url_for("applications"))
+    form = {"job_id": request.args.get("job_id"),
+            "application_date": today_str(), "status": "Applied"}
+    return render_application_form(form, "Add")
+
+
+@app.route("/applications/<int:application_id>/edit", methods=["GET", "POST"])
+def application_edit(application_id):
+    existing = db.get_application(application_id)
+    if not existing:
+        flash("Application not found.", "error")
+        return redirect(url_for("applications"))
+    rounds = existing["interview"].get("rounds") or []
+    if request.method == "POST":
+        raw = clean(request.form, APP_FIELDS)
+        data, errors = validate_application(raw, existing["interview"])
+        if errors:
+            for e in errors:
+                flash(e, "error")
+            return render_application_form(raw, "Edit", rounds)
+        db.update_application(application_id, data)
+        flash("Application updated.", "success")
+        return redirect(url_for("applications"))
+    form = dict(existing)
+    form["notes"] = existing["interview"].get("notes")
+    return render_application_form(form, "Edit", rounds)
+
+
+@app.route("/applications/<int:application_id>/delete", methods=["POST"])
+def application_delete(application_id):
+    db.delete_application(application_id)
+    flash("Application deleted.", "success")
+    return redirect(url_for("applications"))
 
 # Keep this block LAST: routes defined below it would never be registered.
 if __name__ == "__main__":
