@@ -24,6 +24,11 @@ MySQL command-line client.
 The app uses Flask and the MySQL Connector/Python package. Dependencies are
 listed in `requirements.txt`; no separate Node.js installation is needed.
 
+## Project demo
+
+Watch the 3–7 minute course demo:
+[demo/demo.mp4](demo/demo.mp4)
+
 ## 1. Get the project
 
 Clone the repository and enter its folder:
