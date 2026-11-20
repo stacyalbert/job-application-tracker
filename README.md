@@ -28,6 +28,7 @@ listed in `requirements.txt`; no separate Node.js installation is needed.
 
 Watch the 3–7 minute course demo:
 [demo/demo.mp4](demo/demo.mp4)
+
 Google Drive link of the demo: https://drive.google.com/file/d/1jV5ipT1Qub0Y30_Fd8sKfpccC4OxOuV6/view?usp=sharing
 
 ## 1. Get the project
